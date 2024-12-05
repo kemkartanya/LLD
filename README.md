@@ -1,1 +1,1 @@
-# Practic Qs for LLD Interviews
+## Practice Qs for LLD Interviews

@@ -1,202 +1,220 @@
 #include <iostream>
-#include <string>
 #include <vector>
-
+#include <unordered_map>
+#include <string>
+#include <memory>
+#include <map>
 using namespace std;
 
-// forward declaration of classes
+// Forward declarations
+class CinemaHall;
 class Movie;
+class Audi;
 class Show;
-class Theatre;
-class Ticket;
+class Seat;
+class User;
+class SystemMember;
+class Member;
+class Admin;
+class Booking;
+class Payment;
+class Search;
+class Account;
+class Address;
 
-// Enums
-enum Language {ENGLISH, HINDI};
-enum Genre {ACTION, ROMANCE, COMEDY, HORROR};
+// Enums for seat, status, genre, etc.
+enum class SeatType { DELUX, VIP, ECONOMY, OTHER };
+enum class SeatStatus { BOOKED, AVAILABLE, RESERVED, NOT_AVAILABLE };
+enum class Genre { SCI_FI, DRAMA, ROM_COM, FANTASY };
+enum class BookingStatus { REQUESTED, PENDING, CONFIRMED, CANCELLED };
+enum class PaymentStatus { UNPAID, PENDING, COMPLETED, DECLINED, CANCELLED, REFUNDED };
 
+// Address Class
+class Address {
+public:
+    int pinCode; // Zip Code
+    string street, city, state, country;
+};
+
+// Movie Class
 class Movie {
-  string name;
-  float ratings;
-
-  Language *language;
-  Genre *genre;
-
-  public:
-    // constructor
-    Movie (string name, Language language, Genre genre) {
-      name = name;
-      ratings = 0.0;
-      language = language;
-      genre = genre;
-    }
-
-    // getters and setters
-    string getName () {
-      return name;
-    }
-
-    void setName (string name) {
-      name = name;
-    }
-
-    float getRatings () {
-      return ratings;
-    }
-
-    void setRatings (float ratings) {
-      ratings = ratings;
-    }
-
-    Language *getLanguage () {
-      return language;
-    }
-
-    void setLanguage (Language *language) {
-      language = language;
-    }
-
-    Genre *getGenre () {
-      return genre;
-    }
-
-    void setGenre (Genre *genre) {
-      genre = genre;
-    }
+public:
+    string movieName;
+    int movieId;
+    int durationInMins;
+    string language;
+    Genre genre;
+    string releaseDate; // Simplified date
+    map<string, vector<shared_ptr<Show>>> cityShowMap; // Shows grouped by city
 };
 
-class Theatre {
-  int id;
-  string name;
-  string location;
-  int capacity;
-
-  vector <Show> shows;
-
-  public :
-    Theatre (int id, string name, string location, int capacity, vector <Show> shows) {
-      id = id;
-      name = name;
-      location = location;
-      capacity = capacity;
-      shows = shows;
-    }
-
-    /* Getters and setters
-     .
-     .
-     .
-    */
+// Seat Class
+class Seat {
+public:
+    int seatId;
+    SeatType seatType;
+    SeatStatus seatStatus;
+    double price;
 };
 
+// Show Class
 class Show {
-  int id;
-  string showTime;
-  int availableSeats;
-
-  Movie *movie;
-  Theatre *theatre;
-
-  public:
-    Show (int id, string showTime, int availableSeats, Movie *movie, Theatre *theatre) {
-      id = id;
-      showTime = showTime;
-      availableSeats = availableSeats;
-      movie = movie;
-      theatre = theatre;
-    }
-
-    /* Getters and setters
-     .
-     .
-     .
-    */
+public:
+    int showId;
+    shared_ptr<Movie> movie;
+    string startTime;
+    string endTime;
+    weak_ptr<CinemaHall> cinemaPlayedAt;
+    vector<Seat> seats;
 };
 
-class Ticket {
-  int id;
-  string ownerName;
-  int numberOfSeats;
-  string bookingTime;
-
-  Show *bookedShow;
-
-  public:
-    Ticket (int id, string ownerName, int numberOfSeats, string bookingTime, Show *bookedShow) {
-      id = id;
-      ownerName = ownerName;
-      bookingTime = bookingTime;
-      bookedShow = bookedShow;
-      numberOfSeats = numberOfSeats;
-    }
-
-    /* Getters and setters
-     .
-     .
-     .
-    */
+// Audi Class
+class Audi {
+public:
+    int audiId;
+    string audiName;
+    int totalSeats;
+    vector<shared_ptr<Show>> shows;
 };
 
+// CinemaHall Class
+class CinemaHall {
+public:
+    int cinemaHallId;
+    string cinemaHallName;
+    Address address;
+    vector<shared_ptr<Audi>> audiList;
+
+    map<string, shared_ptr<Movie>> getMovies(const vector<string>& dateList) {
+        map<string, shared_ptr<Movie>> movies;
+        // Implementation stub
+        return movies;
+    }
+
+    map<string, shared_ptr<Show>> getShows(const vector<string>& dateList) {
+        map<string, shared_ptr<Show>> shows;
+        // Implementation stub
+        return shows;
+    }
+};
+
+// Account Class
+class Account {
+public:
+    string userName;
+    string password;
+};
+
+// Search Class
+class Search {
+public:
+    vector<shared_ptr<Movie>> searchMoviesByName(const string& name) {
+        return {}; // Stub
+    }
+
+    vector<shared_ptr<Movie>> searchMoviesByGenre(Genre genre) {
+        return {}; // Stub
+    }
+
+    vector<shared_ptr<Movie>> searchMoviesByLanguage(const string& language) {
+        return {}; // Stub
+    }
+
+    vector<shared_ptr<Movie>> searchMoviesByDate(const string& releaseDate) {
+        return {}; // Stub
+    }
+};
+
+// Payment Class
+class Payment {
+public:
+    double amount;
+    string paymentDate;
+    int transactionId;
+    PaymentStatus paymentStatus;
+};
+
+// Booking Class
+class Booking {
+public:
+    string bookingId;
+    string bookingDate;
+    shared_ptr<Member> member;
+    shared_ptr<Audi> audi;
+    shared_ptr<Show> show;
+    BookingStatus bookingStatus;
+    double totalAmount;
+    vector<Seat> seats;
+    shared_ptr<Payment> paymentObj;
+
+    bool makePayment(shared_ptr<Payment> payment) {
+        // Stub implementation
+        return true;
+    }
+};
+
+// User Class
 class User {
-  int id;
-  string name;
+public:
+    int userId;
+    shared_ptr<Search> searchObj;
+};
 
-  public:
-    User (int id, string name) {
-      id = id;
-      name = name;
+// SystemMember Class
+class SystemMember : public User {
+public:
+    shared_ptr<Account> account;
+    string name;
+    string email;
+    Address address;
+};
+
+// Member Class
+class Member : public SystemMember {
+public:
+    bool makeBooking(shared_ptr<Booking> booking) {
+        // Implementation stub
+        return true;
     }
 
-    /* Getters and setters
-     .
-     .
-     .
-    */
+    vector<shared_ptr<Booking>> getBooking() {
+        return {}; // Stub
+    }
 };
 
-class GuestUser: virtual public User {
-  public:
-    GuestUser (int id, string name) : User (id, name) {};
-
-    /* Getters and setters
-     .
-     .
-     .
-    */
-};
-
-class RegisteredUser: virtual public User {
-  vector <Ticket> bookingHistory;
-
-  public:
-    RegisteredUser (int id, string name) : User (id, name) {};
-
-    /* Getters and setters
-     .
-     .
-     .
-    */
-};
-
-class BookMyShow {
-  vector <User> users;
-  vector <Theatre> theatres;
-
-  public:
-    BookMyShow (vector <User> users, vector <Theatre> theatres) {
-      users = users;
-      theatres = theatres;
+// Admin Class
+class Admin : public SystemMember {
+public:
+    bool addMovie(shared_ptr<Movie> movie) {
+        // Implementation stub
+        return true;
     }
 
-    /* Getters and setters
-     .
-     .
-     .
-    */
+    bool addShow(shared_ptr<Show> show) {
+        // Implementation stub
+        return true;
+    }
 };
 
+// BMSService Class
+class BMSService {
+private:
+    vector<shared_ptr<CinemaHall>> cinemas;
 
-int main () {
-  cout << "Book My Show System" << endl;
+public:
+    vector<shared_ptr<Movie>> getMovies(const string& date, const string& city) {
+        // Implementation stub
+        return {};
+    }
 
-  return 0;
+    vector<shared_ptr<CinemaHall>> getCinemaHalls(const string& city) {
+        // Implementation stub
+        return {};
+    }
+};
+
+int main() {
+    cout << "BMSService C++ Implementation" << endl;
+
+    return 0;
 }

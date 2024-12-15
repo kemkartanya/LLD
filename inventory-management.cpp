@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <string>
 #include <memory> // For std::shared_ptr
+using namespace std;
 
 // Forward declarations
 class Unit;
@@ -16,35 +17,35 @@ enum class Size { S, M, L };
 // Product Class
 class Product {
 public:
-    std::string id;
+    string id;
     double price;
-    std::string description;
+    string description;
     double weight;
     Size size;
 
-    Product(std::string id, double price, std::string description, double weight, Size size)
+    Product(string id, double price, string description, double weight, Size size)
         : id(id), price(price), description(description), weight(weight), size(size) {}
 };
 
 // Unit Class
 class Unit {
 public:
-    std::string id;
-    std::string productId;
-    std::string locationId;
+    string id;
+    string productId;
+    string locationId;
     Status status;
 
-    Unit(std::string id, std::string productId)
+    Unit(string id, string productId)
         : id(id), productId(productId), locationId(""), status(Status::INVENTORY) {}
 };
 
 // Location Class
 class Location {
 public:
-    std::string id;
+    string id;
     Size type;
 
-    Location(std::string id, Size type) : id(id), type(type) {}
+    Location(string id, Size type) : id(id), type(type) {}
 
     // Overloading hash function for unordered_map
     bool operator==(const Location& other) const {
@@ -54,27 +55,27 @@ public:
 
 // Custom hash function for Location
 struct LocationHash {
-    std::size_t operator()(const Location& loc) const {
-        return std::hash<std::string>()(loc.id);
+    size_t operator()(const Location& loc) const {
+        return hash<string>()(loc.id);
     }
 };
 
 // InventorySystem Class
 class InventorySystem {
 private:
-    static std::unordered_map<std::string, std::shared_ptr<Product>> productMap;
-    static std::unordered_map<Location, std::shared_ptr<Unit>, LocationHash> locationMap;
+    static unordered_map<string, shared_ptr<Product>> productMap;
+    static unordered_map<Location, shared_ptr<Unit>, LocationHash> locationMap;
 
 public:
-    static void addProduct(std::shared_ptr<Product> product) {
+    static void addProduct(shared_ptr<Product> product) {
         productMap[product->id] = product;
     }
 
-    static std::shared_ptr<Product> getProduct(const std::string& productId) {
+    static shared_ptr<Product> getProduct(const string& productId) {
         return productMap[productId];
     }
 
-    static void placeUnit(std::shared_ptr<Unit> unit) {
+    static void placeUnit(shared_ptr<Unit> unit) {
         for (auto& entry : locationMap) {
             // Simulating a lock mechanism (not implemented)
             if (entry.second == nullptr) {
@@ -86,7 +87,7 @@ public:
         }
     }
 
-    static void removeUnit(const std::shared_ptr<Product>& product) {
+    static void removeUnit(const shared_ptr<Product>& product) {
         for (auto it = locationMap.begin(); it != locationMap.end(); ++it) {
             // Simulating a lock mechanism (not implemented)
             if (it->second != nullptr && it->second->productId == product->id) {
@@ -97,29 +98,29 @@ public:
         }
     }
 
-    static const std::unordered_map<Location, std::shared_ptr<Unit>, LocationHash>& getShelvesStatus() {
+    static const unordered_map<Location, shared_ptr<Unit>, LocationHash>& getShelvesStatus() {
         return locationMap;
     }
 
-    static void updateStatus(std::shared_ptr<Unit> unit, Status status) {
+    static void updateStatus(shared_ptr<Unit> unit, Status status) {
         unit->status = status;
     }
 };
 
 // Static members initialization
-std::unordered_map<std::string, std::shared_ptr<Product>> InventorySystem::productMap;
-std::unordered_map<Location, std::shared_ptr<Unit>, LocationHash> InventorySystem::locationMap;
+unordered_map<string, shared_ptr<Product>> InventorySystem::productMap;
+unordered_map<Location, shared_ptr<Unit>, LocationHash> InventorySystem::locationMap;
 
 // Order Class
 class Order {
 public:
-    std::unordered_map<std::shared_ptr<Product>, int> productCount;
+    unordered_map<shared_ptr<Product>, int> productCount;
 };
 
 // User Class
 class User {
 public:
-    void addProduct(std::shared_ptr<Product> product) {
+    void addProduct(shared_ptr<Product> product) {
         InventorySystem::addProduct(product);
     }
 
@@ -135,8 +136,8 @@ public:
 // Main Function for Example Usage
 int main() {
     // Create Products
-    auto product1 = std::make_shared<Product>("P001", 10.5, "Sample Product 1", 2.0, Size::M);
-    auto product2 = std::make_shared<Product>("P002", 20.0, "Sample Product 2", 3.0, Size::L);
+    auto product1 = make_shared<Product>("P001", 10.5, "Sample Product 1", 2.0, Size::M);
+    auto product2 = make_shared<Product>("P002", 20.0, "Sample Product 2", 3.0, Size::L);
 
     // Add Products
     User user;
@@ -144,8 +145,8 @@ int main() {
     user.addProduct(product2);
 
     // Create Units
-    auto unit1 = std::make_shared<Unit>("U001", "P001");
-    auto unit2 = std::make_shared<Unit>("U002", "P002");
+    auto unit1 = make_shared<Unit>("U001", "P001");
+    auto unit2 = make_shared<Unit>("U002", "P002");
 
     // Place Units in InventorySystem
     InventorySystem::placeUnit(unit1);
@@ -153,8 +154,8 @@ int main() {
 
     // Check Shelf Status
     for (const auto& shelf : InventorySystem::getShelvesStatus()) {
-        std::cout << "Location: " << shelf.first.id
-                  << " | Unit: " << (shelf.second ? shelf.second->id : "Empty") << std::endl;
+        cout << "Location: " << shelf.first.id
+             << " | Unit: " << (shelf.second ? shelf.second->id : "Empty") << endl;
     }
 
     return 0;

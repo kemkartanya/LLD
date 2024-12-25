@@ -6,7 +6,7 @@ SudoCode Best for theory: https://www.youtube.com/playlist?list=PLTCrU9sGybupCpY
 
 Common Qs: https://github.com/ashishps1/awesome-low-level-design
 
-https://www.youtube.com/playlist?list=PLMCXHnjXnTnvQVh7WsgZ8SurU1O2v_UM7
+GKCS LLD Playlist: https://www.youtube.com/playlist?list=PLMCXHnjXnTnvQVh7WsgZ8SurU1O2v_UM7
 
 
 Credits: GeeksForGeeks, Refactoring Guru, Sudo Code

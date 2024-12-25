@@ -1,169 +1,189 @@
 #include <iostream>
-#include <vector>
+#include <memory>
 #include <map>
 #include <string>
-#include <ctime>
+#include <stdexcept>
+#include <vector>
 
 using namespace std;
 
-enum class PaymentType {
-    CASH,
-    CREDIT_CARD,
-    DEBIT_CARD,
-    UPI
-};
-
-enum class ParkingSpaceType {
-    BIKE_PARKING,
-    CAR_PARKING,
-    TRUCK_PARKING
-};
-
+// Enum for Vehicle Type
 enum class VehicleType {
-    BIKE,
     CAR,
-    TRUCK
+    TRUCK,
+    ELECTRIC,
+    VAN,
+    MOTORBIKE
 };
 
-enum class ParkingTicketStatus {
-    PAID,
-    ACTIVE
+string getVehicleTypeDescription(VehicleType type) {
+    switch (type) {
+        case VehicleType::CAR: return "Car";
+        case VehicleType::TRUCK: return "Truck";
+        case VehicleType::ELECTRIC: return "Electric Car";
+        case VehicleType::VAN: return "Van";
+        case VehicleType::MOTORBIKE: return "Motorbike";
+        default: return "Unknown";
+    }
+}
+
+// Enum for Parking Spot Type
+enum class ParkingSpotType {
+    HANDICAPPED,
+    COMPACT,
+    LARGE,
+    MOTORBIKE,
+    ELECTRIC
 };
 
-enum class PaymentStatus {
-    UNPAID,
-    PENDING,
-    COMPLETED,
-    DECLINED,
-    CANCELLED,
-    REFUNDED
-};
+string getParkingSpotTypeDescription(ParkingSpotType type) {
+    switch (type) {
+        case ParkingSpotType::HANDICAPPED: return "Handicapped";
+        case ParkingSpotType::COMPACT: return "Compact";
+        case ParkingSpotType::LARGE: return "Large";
+        case ParkingSpotType::MOTORBIKE: return "Motorbike";
+        case ParkingSpotType::ELECTRIC: return "Electric Charging";
+        default: return "Unknown";
+    }
+}
 
-class Address {
+// Class for Parking Spot
+class ParkingSpot {
+protected:
+    string number;
+    bool free = true;
+    VehicleType vehicleType;
+    ParkingSpotType type;
+
 public:
-    string country;
-    string state;
-    string city;
-    string street;
-    string pinCode;
-};
+    ParkingSpot(ParkingSpotType type, const string& number) : type(type), number(number) {}
 
-class ParkingSpace {
-public:
-    int spaceId;
-    bool isFree;
-    double costPerHour;
-    Vehicle* vehicle; // Pointer to Vehicle class
-    ParkingSpaceType parkingSpaceType;
-};
+    bool isFree() const {
+        return free;
+    }
 
-class ParkingDisplayBoard {
-public:
-    map<ParkingSpaceType, int> freeSpotsAvailableMap;
+    string getNumber() const {
+        return number;
+    }
 
-    void updateFreeSpotsAvailable(ParkingSpaceType parkingSpaceType, int spaces) {
-        freeSpotsAvailableMap[parkingSpaceType] = spaces;
+    ParkingSpotType getType() const {
+        return type;
+    }
+
+    bool assignVehicle(VehicleType vehicle) {
+        if (!free) return false;
+        vehicleType = vehicle;
+        free = false;
+        return true;
+    }
+
+    void removeVehicle() {
+        free = true;
     }
 };
 
-class ParkingFloor {
+// Specific Parking Spot Types
+class HandicappedSpot : public ParkingSpot {
 public:
-    int levelId;
-    vector<ParkingSpace> parkingSpaces;
-    ParkingDisplayBoard parkingDisplayBoard;
+    HandicappedSpot(const string& number) : ParkingSpot(ParkingSpotType::HANDICAPPED, number) {}
 };
 
-class Account {
+class CompactSpot : public ParkingSpot {
 public:
-    string name;
-    string email;
-    string password;
-    string empId;
-    Address address;
+    CompactSpot(const string& number) : ParkingSpot(ParkingSpotType::COMPACT, number) {}
 };
 
-class ParkingAttendant;
-
-class Gate {
+class LargeSpot : public ParkingSpot {
 public:
-    int gateId;
-    ParkingAttendant* parkingAttendant; // Pointer to ParkingAttendant class
+    LargeSpot(const string& number) : ParkingSpot(ParkingSpotType::LARGE, number) {}
 };
 
-class Entrance : public Gate {
-public:
-    ParkingTicket* getParkingTicket(Vehicle* vehicle);
-};
-
-class Exit : public Gate {
-public:
-    ParkingTicket* payForParking(ParkingTicket* parkingTicket, PaymentType paymentType);
-};
-
-class Admin : public Account {
-public:
-    bool addParkingFloor(ParkingLot* parkingLot, ParkingFloor* floor);
-    bool addParkingSpace(ParkingFloor* floor, ParkingSpace* parkingSpace);
-    bool addParkingDisplayBoard(ParkingFloor* floor, ParkingDisplayBoard* parkingDisplayBoard);
-    // Additional methods as required
-};
-
-class Payment;
-
-class ParkingAttendant : public Account {
-public:
-    Payment* paymentService;
-
-    bool processVehicleEntry(Vehicle* vehicle);
-    PaymentInfo* processPayment(ParkingTicket* parkingTicket, PaymentType paymentType);
-};
-
+// Class for Vehicle
 class Vehicle {
+protected:
+    VehicleType type;
+
 public:
-    string licenseNumber;
-    VehicleType vehicleType;
-    ParkingTicket* parkingTicket;
-    PaymentInfo* paymentInfo;
+    Vehicle(VehicleType type) : type(type) {}
+    VehicleType getType() const { return type; }
 };
 
-class ParkingTicket {
+class Car : public Vehicle {
 public:
-    int ticketId;
-    int levelId;
-    int spaceId;
-    time_t vehicleEntryDateTime;
-    time_t vehicleExitDateTime;
-    ParkingSpaceType parkingSpaceType;
-    double totalCost;
-    ParkingTicketStatus parkingTicketStatus;
-
-    void updateTotalCost();
-    void updateVehicleExitTime(time_t vehicleExitDateTime);
+    Car() : Vehicle(VehicleType::CAR) {}
 };
 
-class Payment {
+class Truck : public Vehicle {
 public:
-    PaymentInfo* makePayment(ParkingTicket* parkingTicket, PaymentType paymentType);
+    Truck() : Vehicle(VehicleType::TRUCK) {}
 };
 
-class PaymentInfo {
-public:
-    double amount;
-    time_t paymentDate;
-    int transactionId;
-    ParkingTicket* parkingTicket;
-    PaymentStatus paymentStatus;
-};
-
+// Singleton Parking Lot Class
 class ParkingLot {
+private:
+    static unique_ptr<ParkingLot> instance;
+    map<string, shared_ptr<ParkingSpot>> parkingSpots;
+
+    ParkingLot() {}
+
 public:
-    vector<ParkingFloor> parkingFloors;
-    vector<Entrance> entrances;
-    vector<Exit> exits;
+    static ParkingLot& getInstance() {
+        if (!instance) {
+            instance = make_unique<ParkingLot>();
+        }
+        return *instance;
+    }
 
-    Address address;
-    string parkingLotName;
+    void addParkingSpot(const shared_ptr<ParkingSpot>& spot) {
+        parkingSpots[spot->getNumber()] = spot;
+    }
 
-    bool isParkingSpaceAvailableForVehicle(Vehicle* vehicle);
-    bool updateParkingAttendant(ParkingAttendant* parkingAttendant, int gateId);
+    shared_ptr<ParkingSpot> findFreeSpot(ParkingSpotType type) {
+        for (const auto& [key, spot] : parkingSpots) {
+            if (spot->getType() == type && spot->isFree()) {
+                return spot;
+            }
+        }
+        return nullptr;
+    }
+
+    void parkVehicle(Vehicle& vehicle) {
+        shared_ptr<ParkingSpot> spot;
+        switch (vehicle.getType()) {
+            case VehicleType::CAR:
+                spot = findFreeSpot(ParkingSpotType::COMPACT);
+                break;
+            case VehicleType::TRUCK:
+                spot = findFreeSpot(ParkingSpotType::LARGE);
+                break;
+            default:
+                cout << "No suitable parking spot found for " << getVehicleTypeDescription(vehicle.getType()) << endl;
+                return;
+        }
+
+        if (spot) {
+            spot->assignVehicle(vehicle.getType());
+            cout << "Vehicle parked at spot: " << spot->getNumber() << endl;
+        } else {
+            cout << "Parking full for " << getVehicleTypeDescription(vehicle.getType()) << endl;
+        }
+    }
 };
+
+unique_ptr<ParkingLot> ParkingLot::instance = nullptr;
+
+// Main function
+int main() {
+    ParkingLot& parkingLot = ParkingLot::getInstance();
+
+    parkingLot.addParkingSpot(make_shared<CompactSpot>("C1"));
+    parkingLot.addParkingSpot(make_shared<LargeSpot>("L1"));
+
+    Car car;
+    Truck truck;
+
+    parkingLot.parkVehicle(car);
+    parkingLot.parkVehicle(truck);
+
+    return 0;
+}

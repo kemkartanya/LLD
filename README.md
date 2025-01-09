@@ -10,12 +10,3 @@ GKCS LLD Playlist: https://www.youtube.com/playlist?list=PLMCXHnjXnTnvQVh7WsgZ8S
 
 
 Credits: GeeksForGeeks, Refactoring Guru, Sudo Code
-
-
-
-
-Shreyansh Bhaiya videos
-
-https://www.youtube.com/playlist?list=PL6W8uoQQ2c63W58rpNFDwdrBnq5G3EfT7
-
-https://www.youtube.com/playlist?list=PL6W8uoQQ2c61X_9e6Net0WdYZidm7zooW

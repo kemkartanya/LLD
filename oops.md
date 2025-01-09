@@ -7,7 +7,8 @@
 **Inheritance**: allow class to inherit properties & methods from other class ie. parent / super class. 
 
 **Polymorphism**: ability of an object to take multiple forms
-Method overriding: when subclass provides a specific implementation of a method that is already defined in the parent class. 
+
+**Method overriding**: when subclass provides a specific implementation of a method that is already defined in the parent class. 
 
 **Abstraction**: showing only the necessary info to the outside world while hiding unnecessary details. (abstract base class, abstract methods)
 A pure virtual function (or abstract function) in C++ is a virtual function for which we can have an implementation, But we must override that function in the derived class, otherwise, the derived class will also become an abstract class. A pure virtual function is declared by assigning 0 in the declaration.

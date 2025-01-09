@@ -11,5 +11,6 @@
 **Method overriding**: when subclass provides a specific implementation of a method that is already defined in the parent class. 
 
 **Abstraction**: showing only the necessary info to the outside world while hiding unnecessary details. (abstract base class, abstract methods)
-A pure virtual function (or abstract function) in C++ is a virtual function for which we can have an implementation, But we must override that function in the derived class, otherwise, the derived class will also become an abstract class. A pure virtual function is declared by assigning 0 in the declaration.
+A pure virtual function (or abstract function) in C++ is a virtual function for which we can have an implementation, But we must override that function in the derived class, otherwise, the derived class will also become an abstract class. 
+**A pure virtual** function is declared by assigning 0 in the declaration.
 virtual function is a member function that is declared in the base class using the keyword virtual and is re-defined (Overridden) in the derived class. It tells the compiler to perform late binding where the compiler matches the object with the right called function and executes it during the runtime. This technique falls under Runtime Polymorphism.
